@@ -18,9 +18,8 @@ fn main() -> glib::ExitCode {
     if let Ok(mut stream) = str_res {
         let mut req = saph::request::SaphRequest::new
             (SERVER_ADDY.to_owned());
-        req.path = "/test/example".into();
-        req.request_type = saph::RequestType::GIVE;
-        req.content = "Hello".into();
+        req.path = "/data".into();
+        req.request_type = saph::RequestType::GET;
         println!("{}", req.request_type.string());
 
         let _ = stream.write_all(&req.to_bytes());
