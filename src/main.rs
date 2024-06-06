@@ -1,16 +1,31 @@
 #![allow(dead_code)]
 
+mod saph;
+
 use std::io::prelude::*;
 use std::net::TcpStream;
 
-use gtk4::{prelude::*, ApplicationWindow, Button};
 use gtk4::{glib, Application};
+use gtk4::{prelude::*, ApplicationWindow, Button};
 
 const APP_ID: &str = "org.juleswhi.ruby";
 
 const SERVER_ADDY: &str = "127.0.0.1:2409";
 
 fn main() -> glib::ExitCode {
+    let str_res = TcpStream::connect(SERVER_ADDY);
+
+    if let Ok(mut stream) = str_res {
+        let mut req = saph::request::SaphRequest::new
+            (SERVER_ADDY.to_owned());
+        req.path = "/test/example".into();
+        req.request_type = saph::RequestType::GIVE;
+        req.content = "Hello".into();
+        println!("{}", req.request_type.string());
+
+        let _ = stream.write_all(&req.to_bytes());
+    }
+
     let app = Application::builder().application_id(APP_ID).build();
     app.connect_activate(build_ui);
     app.run()
@@ -25,10 +40,6 @@ fn build_ui(app: &Application) {
         .margin_end(12)
         .build();
 
-    button.connect_clicked(|_| {
-        let _ = send_req();
-    });
-
     let window = ApplicationWindow::builder()
         .application(app)
         .title("Ruby")
@@ -37,13 +48,3 @@ fn build_ui(app: &Application) {
 
     window.present();
 }
-
-fn send_req() -> std::io::Result<()>{
-    let mut stream = TcpStream::connect(SERVER_ADDY)?;
-
-    stream.write(&[1])?;
-    // stream.read(&mut [0; 128])?;
-
-    Ok(())
-}
-
