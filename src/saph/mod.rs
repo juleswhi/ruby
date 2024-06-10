@@ -21,6 +21,14 @@ impl RequestType {
             Self::INCR => "INCR".into()
         }
     }
+    pub fn from(n: u8) -> Option<Self> {
+        match n {
+            0 => Some(RequestType::GET),
+            1 => Some(RequestType::GIVE),
+            2 => Some(RequestType::INCR),
+            _ => None,
+        }
+    }
 }
 
 impl SaphType for RequestType {
@@ -37,6 +45,17 @@ pub enum ContentType {
     Plaintext,
     CodeMarkdown,
     CodeLua,
+}
+
+impl ContentType {
+    pub fn from(n: u8) -> Option<Self> {
+        match n {
+            0 => Some(ContentType::Plaintext),
+            1 => Some(ContentType::CodeMarkdown),
+            2 => Some(ContentType::CodeLua),
+            _ => None,
+        }
+    }
 }
 
 impl SaphType for ContentType {
